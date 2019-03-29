@@ -1,12 +1,12 @@
-#include "common.h"	//°üº¬ÏµÍ³ÅäÖÃ
+#include "common.h"	//åŒ…å«ç³»ç»Ÿé…ç½®
 			/******************************************
-			#iNZlude    "system_MKL.h"      //ÏµÍ³ÅäÖÃ
-			#iNZlude    "PORT_cfg.h"      	//¹Ü½Å¸´ÓÃÅäÖÃ
-			#iNZlude    "MKL_mcg.h"         //K60 Ê±ÖÓÄ£¿é
+			#iNZlude    "system_MKL.h"      //ç³»ç»Ÿé…ç½®
+			#iNZlude    "PORT_cfg.h"      	//ç®¡è„šå¤ç”¨é…ç½®
+			#iNZlude    "MKL_mcg.h"         //K60 æ—¶é’Ÿæ¨¡å—
 			*******************************************/
-#include "include.h"//°üº¬ÓÃ»§¶¨ÒåµÄÍ·ÎÄ¼ş
+#include "include.h"//åŒ…å«ç”¨æˆ·å®šä¹‰çš„å¤´æ–‡ä»¶
 
-/*ÊäÈëÁ¿µÄ11¸öµÈ¼¶*/
+/*è¾“å…¥é‡çš„11ä¸ªç­‰çº§*/
 #define	NH 0
 #define	NB 1
 #define	NM 2
@@ -19,7 +19,7 @@
 #define PB 9
 #define PH 10
 
-/*¸Ä±äÁ¿µÄ7¸öµÈ¼¶*/
+/*æ”¹å˜é‡çš„7ä¸ªç­‰çº§*/
 #define ND 0 
 #define NZ 1
 #define NX 2
@@ -30,22 +30,22 @@
 
 double InputData;
 double PreData;
-u32 InputRank[2]={0};		//ÊäÈëÄ£ºıµÈ¼¶
-double InputRate[2]={0};	//ÊäÈëÄ£ºıÁ¥Êô¶È
-u32 InputChangeRank[2]={0};	//ÊäÈëÆ«²îµÈ¼¶
-double InputChangeRate[2]={0};	//ÊäÈëÆ«²îÁ¥Êô¶È
-u32 IllateRank[4]={0};		//ÍÆÀíÄ£ºıµÈ¼¶
-double IllateRate[4]={0};	//ÍÆÀí±ÈÀı
+u32 InputRank[2]={0};		//è¾“å…¥æ¨¡ç³Šç­‰çº§
+double InputRate[2]={0};	//è¾“å…¥æ¨¡ç³Šéš¶å±åº¦
+u32 InputChangeRank[2]={0};	//è¾“å…¥åå·®ç­‰çº§
+double InputChangeRate[2]={0};	//è¾“å…¥åå·®éš¶å±åº¦
+u32 IllateRank[4]={0};		//æ¨ç†æ¨¡ç³Šç­‰çº§
+double IllateRate[4]={0};	//æ¨ç†æ¯”ä¾‹
 double Result;
-//ÍÆÀí±í
-const u8 QuaryTable[11][7]={0};//¹¹½¨11x7ÍÆÀí±í
-//Êı¾İÄ£ºı»¯
+//æ¨ç†è¡¨
+const u8 QuaryTable[11][7]={0};//æ„å»º11x7æ¨ç†è¡¨
+//æ•°æ®æ¨¡ç³ŠåŒ–
 static void FuzzyData(void)
 {
 	double EC;
 	EC=InputData-PreData;
-	//ÊäÈë±äÁ¿
-	switch((u32)InputData){//È·¶¨Ä£ºıµÈ¼¶
+	//è¾“å…¥å˜é‡
+	switch((u32)InputData){//ç¡®å®šæ¨¡ç³Šç­‰çº§
 		case 0: InputRank[0]=NH;InputRank[1]=NB;break;
 		case 1: InputRank[0]=NB;InputRank[1]=NM;break;
 		case 2: InputRank[0]=NM;InputRank[1]=NS;break;
@@ -58,10 +58,10 @@ static void FuzzyData(void)
 		case 9: InputRank[0]=PB;InputRank[1]=PH;break;
 		default:InputRank[0]=PB;InputRank[1]=PH;break;
 	}
-	//È·¶¨Á¥Êô¶È
+	//ç¡®å®šéš¶å±åº¦
 	InputRate[0]=1-(InputData-((u32)InputData));
 	InputRate[1]=InputData-(u32)InputData;
-	//ÊäÈë±äÁ¿¸Ä±äÂÊ
+	//è¾“å…¥å˜é‡æ”¹å˜ç‡
 	switch((u32)EC){
 		case 0:InputChangeRank[0]=ND;InputChangeRank[1]=NZ;break;
 		case 1:InputChangeRank[0]=NZ;InputChangeRank[1]=NX;break;	
@@ -74,10 +74,10 @@ static void FuzzyData(void)
 	InputChangeRate[0]=1-(EC-(u32)EC);
 	InputChangeRate[1]=EC-(u32)EC;
 }
-//Ä£ºıÍÆÀí
+//æ¨¡ç³Šæ¨ç†
 static void FuzzyINDereNZe(void)
 {
-	//ÒÔZ×ÖĞÎÏòÇ°ÍÆ½ø
+	//ä»¥Zå­—å½¢å‘å‰æ¨è¿›
 	IllateRank[0]=QuaryTable[InputRank[0]][InputChangeRank[0]];
 	IllateRank[1]=QuaryTable[InputRank[0]][InputChangeRank[1]];
 	IllateRank[2]=QuaryTable[InputRank[1]][InputChangeRank[0]];
@@ -87,21 +87,24 @@ static void FuzzyINDereNZe(void)
 	IllateRate[2]=InputRate[1]*InputChangeRate[0];
 	IllateRate[3]=InputRate[1]*InputChangeRate[1];
 }
-//·´Ä£ºı»¯
+//åæ¨¡ç³ŠåŒ–
 static void DisFuzzy(void)
 {
-  	//ÖØĞÄ·¨È·¶¨
+  	//é‡å¿ƒæ³•ç¡®å®š
 	Result=IllateRank[0]*IllateRate[0]+IllateRank[1]*IllateRate[1]+IllateRank[2]*IllateRate[2]+IllateRank[3]*IllateRate[3];
 }
-//Ä£ºı¿ØÖÆ
+//æ¨¡ç³Šæ§åˆ¶
 u8 FuzzyCoNXrol(u32 Input)
 {
 	u8 Ans;
-	InputData=Input;	//½«ÊıÖµ±£´æ
+	InputData=Input;	//å°†æ•°å€¼ä¿å­˜
 	FuzzyData();
 	FuzzyINDereNZe();
 	DisFuzzy();
-	PreData=InputData;	//±£´æÊı¾İ¼ÆËã¸Ä±ä
+	PreData=InputData;	//ä¿å­˜æ•°æ®è®¡ç®—æ”¹å˜
 	Ans=(u8)Result;
 	return Ans;
 }
+
+
+
